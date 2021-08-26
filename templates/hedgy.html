@@ -1,0 +1,14 @@
+<!doctype html>
+<title>hedgy</title>
+<h1>hedgy</h1>
+<p>Search the Lex Fridman Podcast!</p>
+<form method='get'>
+    <input type='search' name='query' required>
+    <input type='submit' value='Search'>
+</form>
+{% for video_name, video_id, time_stamps in ranking %}
+    <p>{{ video_name }}</p>
+    {% for time_stamp, text in time_stamps %}
+        <a href='https://youtu.be/{{ video_id }}?t={{ time_stamp }}' style='display:block;text-decoration:none;'>{{ time_stamp }} {{ text }}</a>
+    {% endfor %}
+{% endfor %}

@@ -1,3 +1,4 @@
+from flask import render_template
 from string import punctuation
 from nltk import word_tokenize, download
 from nltk.corpus import stopwords
@@ -39,15 +40,5 @@ with open(join(dirname(abspath(__file__)), 'transcripts.p'), 'rb') as f:
     transcripts = load(f)
 
 def hedgy(request):
-    response = """<h1>Search Lex!</h1>
-                  <form action='' method='get'>
-                    <input type='search' name='query' required>
-                    <input type='submit' value='Search'>
-                  </form>"""
-    if 'query' in request.args:
-        ranking = rank(transcripts, request.args.get('query'))
-        for video_name, video_id, time_stamps in ranking:
-            response += f"<p>{video_name}</p><br>\n"
-            for time_stamp, text in time_stamps:
-                response += f"<a href='https://youtu.be/{video_id}?t={time_stamp}' style='text-decoration:none;'>{timedelta(seconds=time_stamp)} {text}</a><br>\n"
-    return response
+    ranking = rank(transcripts, request.args.get('query')) if 'query' in request.args else []
+    return render_template('hedgy.html', ranking=ranking)
