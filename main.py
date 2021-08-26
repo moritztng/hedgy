@@ -4,6 +4,7 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from os.path import join, abspath, dirname
 from pickle import load
+from datetime import timedelta
 
 download('stopwords')
 download('punkt')
@@ -21,10 +22,10 @@ def rank(transcripts, query):
     keywords = preprocess(query)
     ranking = []
     for transcript in transcripts:
-      for time_stamp, words in transcript[2]:
+      for time_stamp, words, text in transcript[2]:
         rank = len(words & keywords)
         if rank:
-          ranking.append(transcript[:2] + [time_stamp, rank])
+          ranking.append(transcript[:2] + [time_stamp, text, rank])
     return sorted(ranking, key=lambda x: x[-1], reverse=True)
 
 with open(join(dirname(abspath(__file__)), 'transcripts.p'), 'rb') as f:
@@ -38,6 +39,6 @@ def hedgy(request):
                   </form>"""
     if 'query' in request.args:
         ranking = rank(transcripts, request.args.get('query'))
-        for time_stamp in ranking:
-            response += f"<a href='https://youtu.be/{time_stamp[1]}?t={time_stamp[2]}'>{time_stamp[0]}</a><br>\n"
+        for video_name, video_id, time_stamp, text, _ in ranking:
+            response += f"<a href='https://youtu.be/{video_id}?t={time_stamp}'>{video_name} {timedelta(seconds=time_stamp)} {text}</a><br>\n"
     return response
