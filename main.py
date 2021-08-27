@@ -5,7 +5,6 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from os.path import join, abspath, dirname
 from pickle import load
-from datetime import timedelta
 
 download('stopwords')
 download('punkt')
@@ -23,17 +22,17 @@ def rank(transcripts, query):
     keywords = preprocess(query)
     ranking = []
     for transcript in transcripts:
-      for time_stamp, words, text in transcript[2]:
-        rank = len(words & keywords)
-        if rank:
-          ranking.append(transcript[:2] + [time_stamp, text, rank])
+        for time_stamp, words, text in transcript[2]:
+            rank = len(words & keywords)
+            if rank:
+                ranking.append(transcript[:2] + [time_stamp, text, rank])
     ranking.sort(key=lambda x: x[-1], reverse=True)
     ranking_grouped = []
     for video_name, video_id, time_stamp, text, _ in ranking:
-      if ranking_grouped and ranking_grouped[-1][1] == video_id:  
-        ranking_grouped[-1][-1].append([time_stamp, text]) 
-      else:
-        ranking_grouped.append([video_name, video_id, [[time_stamp, text]]])
+        if ranking_grouped and ranking_grouped[-1][1] == video_id:
+            ranking_grouped[-1][-1].append([time_stamp, text]) 
+        else:
+            ranking_grouped.append([video_name, video_id, [[time_stamp, text]]])
     return ranking_grouped
 
 with open(join(dirname(abspath(__file__)), 'transcripts.p'), 'rb') as f:
@@ -41,4 +40,4 @@ with open(join(dirname(abspath(__file__)), 'transcripts.p'), 'rb') as f:
 
 def hedgy(request):
     ranking = rank(transcripts, request.args.get('query')) if 'query' in request.args else []
-    return render_template('hedgy.html', ranking=ranking)
+    return render_template('hedgy.html', ranking=ranking, query=request.args.get('query'))
