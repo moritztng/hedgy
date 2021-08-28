@@ -15,25 +15,22 @@ def preprocess(text):
     text = {word for word in text if not set(word) & set(punctuation)}
     text = text - set(stopwords.words('english'))
     stemmer = PorterStemmer()
-    text = {stemmer.stem(word) for word in text}
+    text = {(word, stemmer.stem(word)) for word in text}
     return text
 
 def rank(transcripts, query):
     keywords = preprocess(query)
-    ranking = []
-    for transcript in transcripts:
-        for time_stamp, words, text in transcript[2]:
-            rank = len(words & keywords)
-            if rank:
-                ranking.append(transcript[:2] + [time_stamp, text, rank])
-    ranking.sort(key=lambda x: x[-1], reverse=True)
-    ranking_grouped = []
-    for video_name, video_id, time_stamp, text, _ in ranking:
-        if ranking_grouped and ranking_grouped[-1][1] == video_id:
-            ranking_grouped[-1][-1].append([time_stamp, text]) 
-        else:
-            ranking_grouped.append([video_name, video_id, [[time_stamp, text]]])
-    return ranking_grouped
+    ranking = {}
+    for video_name, video_id, time_stamps in transcripts:
+        for time_stamp, words, text in time_stamps:
+            missing_keywords = {keyword for keyword, keyword_stemmed in keywords if keyword_stemmed not in words}
+            if len(missing_keywords) < len(keywords):
+                if (video_name, video_id, missing_keywords) in ranking:
+                    ranking[(video_name, video_id, missing_keywords)].append((time_stamp, text))
+                else:
+                    ranking[(video_name, video_id, missing_keywords)] = [(time_stamp, text)]
+    ranking = [key + (value) for key, value in ranking.items()]
+    return sorted(ranking, key=lambda x: (len(x[2]), -len(x[3])))
 
 with open(join(dirname(abspath(__file__)), 'transcripts.p'), 'rb') as f:
     transcripts = load(f)
