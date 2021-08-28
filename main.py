@@ -23,7 +23,7 @@ def rank(transcripts, query):
     ranking = {}
     for video_name, video_id, time_stamps in transcripts:
         for time_stamp, words, text in time_stamps:
-            missing_keywords = {keyword for keyword, keyword_stemmed in keywords if keyword_stemmed not in words}
+            missing_keywords = frozenset(keyword for keyword, keyword_stemmed in keywords if keyword_stemmed not in words)
             if len(missing_keywords) < len(keywords):
                 if (video_name, video_id, missing_keywords) in ranking:
                     ranking[(video_name, video_id, missing_keywords)].append((time_stamp, text))
