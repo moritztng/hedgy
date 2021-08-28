@@ -1,4 +1,5 @@
 <!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ query + ' - ' if query is not none}}hedgy</title>
 <style>
   body {
@@ -20,10 +21,16 @@
   }
   input[type=submit] {
     background-color: transparent;
+    cursor: pointer;
   }
   table {
     display: inline-table;
     text-align: left;
+    border-collapse: separate;
+    border-spacing: 10px 5px;
+  }
+  a {
+    text-decoration: none;
   }
   .missing {
     text-decoration: line-through;
@@ -38,12 +45,12 @@
 {% for video_name, video_id, missing_keywords, time_stamps in ranking %}
   <h3>{{ video_name }}</h3>
   {% if missing_keywords %}
-    <div>
+    <p>
       <span>Missing:</span>
       {% for keyword in missing_keywords %}
         <span class="missing">{{ keyword }}</span>
       {% endfor %}
-    </div>
+    </p>
   {% endif %}
   <table>
     {% for time_stamp, text in time_stamps %}
