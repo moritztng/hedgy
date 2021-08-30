@@ -73,9 +73,10 @@
   </table>
 {% endfor %}
 {% if sliced %}
+  {% set max_old = args.get('max') | int %}
   <form method="get">
     <input type="hidden" name="query" value="{{ args.get('query') }}">
-    <input type="hidden" name="max" value="{{ int(args.get('max')) + 100 }}">
+    <input type="hidden" name="max" value="{{ max_old + 100 }}">
     <input type="submit" value="Show more">
   </form>
 {% endif %}
