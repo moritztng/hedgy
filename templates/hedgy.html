@@ -49,7 +49,7 @@
   <input type="search" name="query" required>
   <input type="submit" value="Search">
 </form>
-{% if query %}
+{% if not query %}
   <p>Search the Lex Fridman Podcast!</p>
 {% endif %}
 {% for video_name, video_id, missing_keywords, time_stamps in ranking %}
