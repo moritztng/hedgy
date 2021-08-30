@@ -36,5 +36,14 @@ with open(join(dirname(abspath(__file__)), 'transcripts.p'), 'rb') as f:
     transcripts = load(f)
 
 def hedgy(request):
-    ranking = rank(transcripts, request.args.get('query')) if 'query' in request.args else []
-    return render_template('hedgy.html', ranking=ranking, query=request.args.get('query'))
+    ranking, sliced = [], False
+    if 'query' in request.args:
+        ranking = rank(transcripts, request.args.get('query'))
+        if 'max' in request.args:
+            n_time_stamps = 0
+            for i, item in enumerate(ranking):
+                n_time_stamps += len(item[-1])
+                if n_time_stamps > int(request.args.get('max')) and i:
+                    ranking, sliced = ranking[:i], True
+                    break
+    return render_template('hedgy.html', ranking=ranking, sliced=sliced, args=request.args)

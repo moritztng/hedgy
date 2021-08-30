@@ -1,6 +1,6 @@
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ query + ' - ' if query is not none}}hedgy</title>
+<title>{{ args.get('query') + ' - ' if args.get('query') is not none}}hedgy</title>
 <style>
   body {
     background-color: rgb(250, 250, 250);
@@ -47,9 +47,10 @@
 </a>
 <form method="get">
   <input type="search" name="query" required>
+  <input type="hidden" name="max" value="100">
   <input type="submit" value="Search">
 </form>
-{% if not query %}
+{% if not args.get('query') %}
   <p>Search the Lex Fridman Podcast!</p>
 {% endif %}
 {% for video_name, video_id, missing_keywords, time_stamps in ranking %}
@@ -71,3 +72,10 @@
     {% endfor %}
   </table>
 {% endfor %}
+{% if sliced %}
+  <form method="get">
+    <input type="hidden" name="query" value="{{ args.get('query') }}">
+    <input type="hidden" name="max" value="{{ int(args.get('max')) + 100 }}">
+    <input type="submit" value="Show more">
+  </form>
+{% endif %}
