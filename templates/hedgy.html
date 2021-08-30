@@ -47,7 +47,7 @@
 </a>
 <form method="get">
   <input type="search" name="query" required>
-  <input type="hidden" name="max" value="100">
+  <input type="hidden" name="max" value="500">
   <input type="submit" value="Search">
 </form>
 {% if not args.get('query') %}
@@ -76,7 +76,7 @@
   {% set max_old = args.get('max') | int %}
   <form method="get">
     <input type="hidden" name="query" value="{{ args.get('query') }}">
-    <input type="hidden" name="max" value="{{ max_old + 100 }}">
+    <input type="hidden" name="max" value="{{ max_old + 500 }}">
     <input type="submit" value="Show more">
   </form>
 {% endif %}
