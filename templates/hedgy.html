@@ -57,8 +57,14 @@
   <input type="hidden" name="max" value="500">
   <input type="submit" value="Search">
 </form>
-{% if not args.get('query') %}
-  <p>Search the Lex Fridman Podcast!</p>
+{% if not ranking %}
+  <p>
+    {% if args.get('query') %}
+      No results found
+    {% else %}
+      Search the Lex Fridman Podcast!
+    {% endif %}
+  </p>
 {% endif %}
 {% for video_name, video_id, missing_keywords, time_stamps in ranking %}
   <h3>{{ video_name }}</h3>
