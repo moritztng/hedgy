@@ -1,22 +1,7 @@
 from flask import render_template
-from string import punctuation
-from nltk import word_tokenize, download
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
+from preprocess import preprocess
 from os.path import join, abspath, dirname
 from pickle import load
-
-download('stopwords')
-download('punkt')
-
-def preprocess(text):
-    text = text.lower()
-    text = set(word_tokenize(text))
-    text = {word for word in text if not set(word) & set(punctuation)}
-    text = text - set(stopwords.words('english'))
-    stemmer = PorterStemmer()
-    text = {(word, stemmer.stem(word)) for word in text}
-    return text
 
 def rank(transcripts, query):
     keywords = preprocess(query)
