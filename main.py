@@ -12,9 +12,10 @@ def rank(transcripts, query):
                 missing_keywords = frozenset(keyword for keyword, keyword_stemmed in keywords if keyword_stemmed not in words)
                 if len(missing_keywords) < len(keywords):
                     if (video_name, video_id, missing_keywords) in ranking:
-                        ranking[(video_name, video_id, missing_keywords)].append((time_stamp, text))
+                        ranking[(video_name, video_id, missing_keywords)].append((title, time_stamp, text))
                     else:
-                        ranking[(video_name, video_id, missing_keywords)] = [(time_stamp, text)]
+                        ranking[(video_name, video_id, missing_keywords)] = [(title, time_stamp, text)]
+                    break
     ranking = [key + (value,) for key, value in ranking.items()]
     return sorted(ranking, key=lambda x: (len(x[2]), -len(x[3])))
 
