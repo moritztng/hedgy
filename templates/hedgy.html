@@ -79,9 +79,8 @@
   <table>
     {% for title, (time_stamp, text) in chapters.items() %}
       <tr>
-        <td>{{ title }}</td>
         <td>{{ '%d:%02d:%02d' % (time_stamp // 3600, time_stamp % 3600 // 60, time_stamp % 60) }}</td>
-        <td><a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}">{{ text }}</a></td>
+        <td><a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}">{{ title }}</a></td>
       </tr>
     {% endfor %}
   </table>
