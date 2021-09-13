@@ -12,12 +12,13 @@ def rank(transcripts, query):
                 missing_keywords = frozenset(keyword for keyword, keyword_stemmed in keywords if keyword_stemmed not in words)
                 if len(missing_keywords) < len(keywords):
                     if (video_name, video_id, missing_keywords) in ranking:
-                        ranking[(video_name, video_id, missing_keywords)].append((title, time_stamp, text))
+                        if title not in ranking[(video_name, video_id, missing_keywords)][0]:
+                            ranking[(video_name, video_id, missing_keywords)][0][title] = (time_stamp, text)
+                        ranking[(video_name, video_id, missing_keywords)][1] += 1
                     else:
-                        ranking[(video_name, video_id, missing_keywords)] = [(title, time_stamp, text)]
-                    break
-    ranking = [key + (value,) for key, value in ranking.items()]
-    return sorted(ranking, key=lambda x: (len(x[2]), -len(x[3])))
+                        ranking[(video_name, video_id, missing_keywords)] = ({title: (time_stamp, text)}, 1)
+    ranking = [key + value for key, value in ranking.items()]
+    return sorted(ranking, key=lambda x: (len(x[2]), -len(x[-1])))
 
 with open(join(dirname(abspath(__file__)), 'transcripts.p'), 'rb') as f:
     transcripts = load(f)
@@ -29,7 +30,7 @@ def hedgy(request):
         if 'max' in request.args:
             n_time_stamps = 0
             for i, item in enumerate(ranking):
-                n_time_stamps += len(item[-1])
+                n_time_stamps += len(item[-2])
                 if n_time_stamps > int(request.args.get('max')) and i:
                     ranking, sliced = ranking[:i], True
                     break

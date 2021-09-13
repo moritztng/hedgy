@@ -66,7 +66,7 @@
     {% endif %}
   </p>
 {% endif %}
-{% for video_name, video_id, missing_keywords, time_stamps in ranking %}
+{% for video_name, video_id, missing_keywords, chapters, n_time_stamps in ranking %}
   <h3>{{ video_name }}</h3>
   {% if missing_keywords %}
     <p>
@@ -77,7 +77,7 @@
     </p>
   {% endif %}
   <table>
-    {% for title, time_stamp, text in time_stamps %}
+    {% for title, (time_stamp, text) in chapters.items() %}
       <tr>
         <td>{{ title }}</td>
         <td>{{ '%d:%02d:%02d' % (time_stamp // 3600, time_stamp % 3600 // 60, time_stamp % 60) }}</td>
