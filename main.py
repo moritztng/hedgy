@@ -16,8 +16,8 @@ def rank(transcripts, query):
                             ranking[(video_name, video_id, missing_keywords)][0][title] = (time_stamp, text)
                         ranking[(video_name, video_id, missing_keywords)][1] += 1
                     else:
-                        ranking[(video_name, video_id, missing_keywords)] = ({title: (time_stamp, text)}, 1)
-    ranking = [key + value for key, value in ranking.items()]
+                        ranking[(video_name, video_id, missing_keywords)] = [{title: (time_stamp, text)}, 1]
+    ranking = [key + tuple(value) for key, value in ranking.items()]
     return sorted(ranking, key=lambda x: (len(x[2]), -len(x[-1])))
 
 with open(join(dirname(abspath(__file__)), 'transcripts.p'), 'rb') as f:
