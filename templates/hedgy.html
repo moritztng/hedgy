@@ -36,7 +36,13 @@
     cursor: pointer;
     padding: 10px;
   }
-  a {
+  .chapter {
+    margin: 30px 0px;  
+  }
+  .chapter h3, .chapter p {
+    margin: 10px 0px;
+  }
+  .chapter a {
     text-decoration: none;
   }
   .missing {
@@ -61,16 +67,18 @@
   </p>
 {% endif %}
 {% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
-  <h3>{{ video_name }}</h3>
-  <h3><a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}">{{ title }}</a></h3>
-  {% if missing_keywords %}
-    <p>
-      <span>Missing:</span>
-      {% for keyword in missing_keywords %}
-        <span class="missing">{{ keyword }}</span>
-      {% endfor %}
-    </p>
-  {% endif %}
+  <div class="chapter">
+    <h3>{{ video_name }}</h3>
+    <h3><a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}">{{ title }}</a></h3>
+    {% if missing_keywords %}
+      <p>
+        <span>Missing:</span>
+        {% for keyword in missing_keywords %}
+          <span class="missing">{{ keyword }}</span>
+        {% endfor %}
+      </p>
+    {% endif %}
+  </div>
 {% endfor %}
 {% if sliced %}
   {% set max_old = args.get('max') | int %}
