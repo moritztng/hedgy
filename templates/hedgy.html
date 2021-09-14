@@ -8,6 +8,7 @@
   body {
     background-color: rgb(250, 250, 250);
     text-align: center;
+    font-family: arial;
   }
   img {
     height: 256px;
@@ -36,13 +37,14 @@
     cursor: pointer;
     padding: 10px;
   }
-  table {
-    display: inline-table;
-    text-align: left;
-    border-collapse: separate;
-    border-spacing: 10px 5px;
+  .chapter {
+    margin: 30px 0px;  
   }
-  a {
+  .chapter h3, .chapter p {
+    margin: 10px 0px;
+    font-weight: normal;
+  }
+  .chapter a {
     text-decoration: none;
   }
   .missing {
@@ -54,7 +56,7 @@
 </a>
 <form method="get">
   <input type="search" name="query" required>
-  <input type="hidden" name="max" value="500">
+  <input type="hidden" name="max" value="100">
   <input type="submit" value="Search">
 </form>
 {% if not ranking %}
@@ -66,30 +68,25 @@
     {% endif %}
   </p>
 {% endif %}
-{% for video_name, video_id, missing_keywords, time_stamps in ranking %}
-  <h3>{{ video_name }}</h3>
-  {% if missing_keywords %}
-    <p>
-      <span>Missing:</span>
-      {% for keyword in missing_keywords %}
-        <span class="missing">{{ keyword }}</span>
-      {% endfor %}
-    </p>
-  {% endif %}
-  <table>
-    {% for time_stamp, text in time_stamps %}
-      <tr>
-        <td>{{ '%d:%02d:%02d' % (time_stamp // 3600, time_stamp % 3600 // 60, time_stamp % 60) }}</td>
-        <td><a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}">{{ text }}</a></td>
-      </tr>
-    {% endfor %}
-  </table>
+{% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
+  <div class="chapter">
+    <h3>{{ video_name }}</h3>
+    <h3><a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}">{{ title }}</a></h3>
+    {% if missing_keywords %}
+      <p>
+        <span>Missing:</span>
+        {% for keyword in missing_keywords %}
+          <span class="missing">{{ keyword }}</span>
+        {% endfor %}
+      </p>
+    {% endif %}
+  </div>
 {% endfor %}
 {% if sliced %}
   {% set max_old = args.get('max') | int %}
   <form method="get">
     <input type="hidden" name="query" value="{{ args.get('query') }}">
-    <input type="hidden" name="max" value="{{ max_old + 500 }}">
+    <input type="hidden" name="max" value="{{ max_old + 100 }}">
     <input type="submit" value="Show more">
   </form>
 {% endif %}
