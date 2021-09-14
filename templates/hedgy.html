@@ -36,12 +36,6 @@
     cursor: pointer;
     padding: 10px;
   }
-  table {
-    display: inline-table;
-    text-align: left;
-    border-collapse: separate;
-    border-spacing: 10px 5px;
-  }
   a {
     text-decoration: none;
   }
@@ -66,8 +60,9 @@
     {% endif %}
   </p>
 {% endif %}
-{% for video_name, video_id, missing_keywords, chapters, n_time_stamps in ranking %}
+{% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
   <h3>{{ video_name }}</h3>
+  <h3><a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}">{{ title }}</a></h3>
   {% if missing_keywords %}
     <p>
       <span>Missing:</span>
@@ -76,14 +71,6 @@
       {% endfor %}
     </p>
   {% endif %}
-  <table>
-    {% for title, (time_stamp, text) in chapters.items() %}
-      <tr>
-        <td>{{ '%d:%02d:%02d' % (time_stamp // 3600, time_stamp % 3600 // 60, time_stamp % 60) }}</td>
-        <td><a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}">{{ title }}</a></td>
-      </tr>
-    {% endfor %}
-  </table>
 {% endfor %}
 {% if sliced %}
   {% set max_old = args.get('max') | int %}
