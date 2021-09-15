@@ -37,6 +37,18 @@
     cursor: pointer;
     padding: 10px;
   }
+  .topic {
+    display: inline-block;
+    margin: 20px;
+  }
+  .topic input[type=submit] {
+    width: 200px;
+    height: 200px;
+    background-color: cornflowerblue;
+    color: white;
+    font-weight: bold;
+    border:none;
+  }
   .chapter {
     margin: 30px 0px;  
   }
@@ -68,7 +80,7 @@
     {% endif %}
   </p>
   {% for topic in topics %}
-    <form method="get">
+    <form method="get" class="topic">
       <input type="hidden" name="query" value="{{ topic }}">
       <input type="hidden" name="max" value="100">
       <input type="submit" value="{{ topic }}">
