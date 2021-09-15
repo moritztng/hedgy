@@ -67,6 +67,13 @@
       Search the Lex Fridman Podcast!
     {% endif %}
   </p>
+  {% for topic in topics %}
+    <form method="get">
+      <input type="hidden" name="query" value="{{ topic }}">
+      <input type="hidden" name="max" value="100">
+      <input type="submit" value="{{ topic }}">
+    </form>
+  {% endfor %}
 {% endif %}
 {% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
   <div class="chapter">

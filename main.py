@@ -18,8 +18,10 @@ def rank(transcripts, query):
     ranking = [key + (value,) for key, value in ranking.items()]
     return sorted(ranking, key=lambda x: (len(x[-2]), -len(x[-1])))
 
-with open(join(dirname(abspath(__file__)), 'transcripts.p'), 'rb') as f:
-    transcripts = load(f)
+hedgy_path = dirname(abspath(__file__))
+with open(join(hedgy_path, 'transcripts.p'), 'rb') as transcripts_f, open(join(hedgy_path, 'topics')) as topics_f:
+    transcripts = load(transcripts_f)
+    topics = topics_f.read().splitlines()
 
 def hedgy(request):
     ranking, sliced = [], False
@@ -28,4 +30,4 @@ def hedgy(request):
         if 'max' in request.args:
             sliced = len(ranking) > int(request.args.get('max'))
             ranking = ranking[:int(request.args.get('max'))]
-    return render_template('hedgy.html', ranking=ranking, sliced=sliced, args=request.args)
+    return render_template('hedgy.html', topics=topics, ranking=ranking, sliced=sliced, args=request.args)
