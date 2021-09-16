@@ -1,25 +1,30 @@
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" href="https://storage.googleapis.com/hedgy/hegdy-32x32.png" type="image/png" sizes="32x32">
-<link rel="icon" href="https://storage.googleapis.com/hedgy/hegdy-96x96.png" type="image/png" sizes="96x96">
-<link rel="apple-touch-icon" href="https://storage.googleapis.com/hedgy/hegdy-180x180.png" sizes="180x180">
 <title>{{ args.get('query') + ' - ' if args.get('query') is not none}}hedgy</title>
 <style>
   body {
-    background-color: rgb(250, 250, 250);
+    background-color: rgb(20, 20, 20);
     text-align: center;
+    color: white;
     font-family: arial;
+    font-weight: bold;
   }
-  img {
-    height: 256px;
+  h1 {
+    font-size: 100px;
   }
-  form {
-    margin: 20px 0px;
+  h1 a {
+    color: white;
+  }
+  a {
+    text-decoration: none;
   }
   input {
+    color: white;
     font-size: 16px;
-    border: 2px solid rgb(230, 230, 230);
+    font-weight: bold;
+    border: none;
     border-radius: 24px;
+    background-color: rgb(50, 50, 50);
   }
   input[type=search] {
     width: 500px;
@@ -33,21 +38,20 @@
     -webkit-appearance: none;
   }
   input[type=submit] {
-    background-color: transparent;
     cursor: pointer;
     padding: 10px;
   }
-  .topic {
+  .topics {
     display: inline-block;
-    margin: 20px;
+    width: 900px;
+    max-width: 100%;
   }
-  .topic input[type=submit] {
-    width: 200px;
-    height: 200px;
-    background-color: cornflowerblue;
-    color: white;
-    font-weight: bold;
-    border:none;
+  .topics form {
+    display: inline-block;
+    width: 175px;
+    height: 175px;
+    max-width: calc(50% - 40px);
+    margin: 20px;
   }
   .chapter {
     margin: 30px 0px;  
@@ -56,16 +60,11 @@
     margin: 10px 0px;
     font-weight: normal;
   }
-  .chapter a {
-    text-decoration: none;
-  }
   .missing {
     text-decoration: line-through;
   }
 </style>
-<a href="/">
-  <img src="https://storage.googleapis.com/hedgy/hedgy.webp" alt="hedgy">
-</a>
+<h1><a href="/">hedgy</a></h1>
 <form method="get">
   <input type="search" name="query" required>
   <input type="hidden" name="max" value="100">
@@ -79,13 +78,15 @@
       Search the Lex Fridman Podcast!
     {% endif %}
   </p>
-  {% for topic in topics %}
-    <form method="get" class="topic">
-      <input type="hidden" name="query" value="{{ topic }}">
-      <input type="hidden" name="max" value="100">
-      <input type="submit" value="{{ topic }}">
-    </form>
-  {% endfor %}
+  <div class="topics">
+    {% for topic in topics %}
+      <form method="get">
+        <input type="hidden" name="query" value="{{ topic }}">
+        <input type="hidden" name="max" value="100">
+        <input type="submit" value="{{ topic }}">
+      </form>
+    {% endfor %}
+  </div>
 {% endif %}
 {% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
   <div class="chapter">
