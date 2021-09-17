@@ -18,7 +18,6 @@
     color: white;
   }
   a {
-    color: rgb(150, 150, 150);
     text-decoration: none;
   }
   input {
@@ -43,6 +42,7 @@
   input[type=submit] {
     cursor: pointer;
     padding: 10px;
+    white-space: normal;
   }
   .topics {
     display: inline-block;
@@ -59,14 +59,26 @@
   .topics input[type=submit] {
     width: 100%;
     height: 100%;
-    white-space: normal;
     vertical-align: middle;
   }
   .chapter {
-    margin: 30px 0px;  
+    display: block;
+    margin: 35px 0px;
+    white-space: nowrap;
   }
-  .chapter h3, .chapter p {
-    margin: 10px 0px;
+  .chapter input[type=submit] {
+    width: 180px;
+    height: 180px;
+    max-width: calc(0.36 * (100vw - 60px));
+    max-height: calc(0.36 * (100vw - 60px));
+    margin: 0px 10px;
+    vertical-align: middle;
+  }
+  .chapter img {
+    max-width: calc(0.64 * (100vw - 60px));
+    margin: 0px 10px;
+    border-radius: 24px;
+    vertical-align: middle;
   }
   .missing {
     text-decoration: line-through;
@@ -97,9 +109,9 @@
   </div>
 {% endif %}
 {% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
-  <div class="chapter">
-    <h3>{{ video_name }}</h3>
-    <h3><a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}">{{ title }}</a></h3>
+  <a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}" class="chapter">
+    <input type="submit" value="{{ title }}">
+    <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="{{ video_name }}" width="320" height="180">
     {% if missing_keywords %}
       <p>
         <span>Missing:</span>
@@ -108,7 +120,7 @@
         {% endfor %}
       </p>
     {% endif %}
-  </div>
+  </a>
 {% endfor %}
 {% if sliced %}
   {% set max_old = args.get('max') | int %}
