@@ -1,5 +1,6 @@
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2285%22>&#127908;</text></svg>">
 <title>{{ args.get('query') + ' - ' if args.get('query') is not none}}hedgy</title>
 <style>
   body {
@@ -14,11 +15,8 @@
     font-size: 100px;
     margin: 35px 0px;
   }
-  h1 a {
-    color: white;
-  }
   a {
-    color: rgb(150, 150, 150);
+    color: white;
     text-decoration: none;
   }
   input {
@@ -59,14 +57,18 @@
   .topics input[type=submit] {
     width: 100%;
     height: 100%;
-    white-space: normal;
     vertical-align: middle;
+    white-space: normal;
   }
   .chapter {
-    margin: 30px 0px;  
+    display: block;
+    width: 320px;
+    max-width: 80%;
+    margin: 35px auto;
   }
-  .chapter h3, .chapter p {
-    margin: 10px 0px;
+  .chapter img {
+    width: 100%;
+    border-radius: 24px;
   }
   .missing {
     text-decoration: line-through;
@@ -75,7 +77,7 @@
 <h1><a href="/">hedgy</a></h1>
 <form method="get">
   <input type="search" name="query" required>
-  <input type="hidden" name="max" value="100">
+  <input type="hidden" name="max" value="50">
   <input type="submit" value="Search">
 </form>
 {% if not ranking %}
@@ -83,23 +85,23 @@
     {% if args.get('query') %}
       No results found
     {% else %}
-      Search the Lex Fridman Podcast!
+      Search the Lex Fridman Podcast &#127908;
     {% endif %}
   </p>
   <div class="topics">
     {% for topic in topics %}
       <form method="get">
         <input type="hidden" name="query" value="{{ topic }}">
-        <input type="hidden" name="max" value="100">
+        <input type="hidden" name="max" value="50">
         <input type="submit" value="{{ topic }}">
       </form>
     {% endfor %}
   </div>
 {% endif %}
 {% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
-  <div class="chapter">
-    <h3>{{ video_name }}</h3>
-    <h3><a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}">{{ title }}</a></h3>
+  <a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}" class="chapter">
+    <h3>{{ title }}</h3>
+    <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="{{ video_name }}">
     {% if missing_keywords %}
       <p>
         <span>Missing:</span>
@@ -108,13 +110,13 @@
         {% endfor %}
       </p>
     {% endif %}
-  </div>
+  </a>
 {% endfor %}
 {% if sliced %}
   {% set max_old = args.get('max') | int %}
   <form method="get">
     <input type="hidden" name="query" value="{{ args.get('query') }}">
-    <input type="hidden" name="max" value="{{ max_old + 100 }}">
+    <input type="hidden" name="max" value="{{ max_old + 50 }}">
     <input type="submit" value="Show more">
   </form>
 {% endif %}
