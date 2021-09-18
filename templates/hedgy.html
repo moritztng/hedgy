@@ -14,10 +14,8 @@
     font-size: 100px;
     margin: 35px 0px;
   }
-  h1 a {
-    color: white;
-  }
   a {
+    color: white;
     text-decoration: none;
   }
   input {
@@ -42,7 +40,6 @@
   input[type=submit] {
     cursor: pointer;
     padding: 10px;
-    white-space: normal;
   }
   .topics {
     display: inline-block;
@@ -60,25 +57,15 @@
     width: 100%;
     height: 100%;
     vertical-align: middle;
+    white-space: normal;
   }
   .chapter {
     display: block;
     margin: 35px 0px;
-    white-space: nowrap;
-  }
-  .chapter input[type=submit] {
-    width: 180px;
-    height: 180px;
-    max-width: calc(0.36 * (100vw - 60px));
-    max-height: calc(0.36 * (100vw - 60px));
-    margin: 0px 10px;
-    vertical-align: middle;
   }
   .chapter img {
-    max-width: calc(0.64 * (100vw - 60px));
-    margin: 0px 10px;
+    max-width: 80%;
     border-radius: 24px;
-    vertical-align: middle;
   }
   .missing {
     text-decoration: line-through;
@@ -87,7 +74,7 @@
 <h1><a href="/">hedgy</a></h1>
 <form method="get">
   <input type="search" name="query" required>
-  <input type="hidden" name="max" value="100">
+  <input type="hidden" name="max" value="50">
   <input type="submit" value="Search">
 </form>
 {% if not ranking %}
@@ -102,7 +89,7 @@
     {% for topic in topics %}
       <form method="get">
         <input type="hidden" name="query" value="{{ topic }}">
-        <input type="hidden" name="max" value="100">
+        <input type="hidden" name="max" value="50">
         <input type="submit" value="{{ topic }}">
       </form>
     {% endfor %}
@@ -110,8 +97,8 @@
 {% endif %}
 {% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
   <a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}" class="chapter">
-    <input type="submit" value="{{ title }}">
-    <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="{{ video_name }}" width="320" height="180">
+    <h3>{{ title }}</h3>
+    <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="{{ video_name }}" width="320">
     {% if missing_keywords %}
       <p>
         <span>Missing:</span>
@@ -126,7 +113,7 @@
   {% set max_old = args.get('max') | int %}
   <form method="get">
     <input type="hidden" name="query" value="{{ args.get('query') }}">
-    <input type="hidden" name="max" value="{{ max_old + 100 }}">
+    <input type="hidden" name="max" value="{{ max_old + 50 }}">
     <input type="submit" value="Show more">
   </form>
 {% endif %}
