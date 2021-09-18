@@ -1,5 +1,6 @@
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#127908;</text></svg>">
 <title>{{ args.get('query') + ' - ' if args.get('query') is not none}}hedgy</title>
 <style>
   body {
@@ -66,6 +67,7 @@
     margin: 35px auto;
   }
   .chapter img {
+    width: 100%;
     border-radius: 24px;
   }
   .missing {
@@ -83,7 +85,7 @@
     {% if args.get('query') %}
       No results found
     {% else %}
-      Search the Lex Fridman Podcast!
+      Search the Lex Fridman Podcast &#127908;
     {% endif %}
   </p>
   <div class="topics">
