@@ -61,10 +61,11 @@
   }
   .chapter {
     display: block;
-    margin: 35px 0px;
+    width: 320px;
+    max-width: 80%;
+    margin: 35px auto;
   }
   .chapter img {
-    max-width: 80%;
     border-radius: 24px;
   }
   .missing {
@@ -98,7 +99,7 @@
 {% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
   <a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}" class="chapter">
     <h3>{{ title }}</h3>
-    <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="{{ video_name }}" width="320">
+    <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="{{ video_name }}">
     {% if missing_keywords %}
       <p>
         <span>Missing:</span>
