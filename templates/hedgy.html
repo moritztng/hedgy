@@ -98,7 +98,7 @@
     {% endfor %}
   </div>
 {% endif %}
-{% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
+{% for video_name, video_id, title, chapter_id, missing_keywords, time_stamps in ranking %}
   <a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}" class="chapter">
     <h3>{{ title }}</h3>
     <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="{{ video_name }}">
@@ -111,6 +111,11 @@
       </p>
     {% endif %}
   </a>
+  <form method="get">
+    <input type="hidden" name="similar" value="{{ chapter_id }}">
+    <input type="hidden" name="max" value="50">
+    <input type="submit" value="Similar Chapters">
+  </form>
 {% endfor %}
 {% if sliced %}
   {% set max_old = args.get('max') | int %}
