@@ -1,10 +1,12 @@
 import numpy as np
+from nltk import download
 from flask import render_template
-from preprocess import preprocess
 from os.path import join, abspath, dirname
 from pickle import load
 
-def rank(transcripts, query):
+download('punkt')
+
+''' def rank(transcripts, query):
     keywords = preprocess(query)
     ranking = {}
     for video_name, video_id, chapters in transcripts:
@@ -17,26 +19,21 @@ def rank(transcripts, query):
                     else:
                         ranking[(video_name, video_id, title, chapter_id, missing_keywords)] = [(time_stamp, text)]
     ranking = [key + (value,) for key, value in ranking.items()]
-    return sorted(ranking, key=lambda x: (len(x[-2]), -len(x[-1])))
+    return sorted(ranking, key=lambda x: (len(x[-2]), -len(x[-1]))) '''
 
 hedgy_path = dirname(abspath(__file__))
-with open(join(hedgy_path, 'transcripts.p'), 'rb') as transcripts_f, open(join(hedgy_path, 'topics')) as topics_f:
-    transcripts = load(transcripts_f)
+with open(join(hedgy_path, 'chapters.p'), 'rb') as chapters_f, open(join(hedgy_path, 'vectorizer.p'), 'rb') as vectorizer_f, open(join(hedgy_path, 'topics')) as topics_f:
+    chapters = load(chapters_f)
+    vectorizer = load(vectorizer_f)
     topics = topics_f.read().splitlines()
+tfidf_matrix = np.load(join(hedgy_path, 'tfidf.npy'))
 similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
 def hedgy(request):
     ranking, sliced = [], False
-    if 'query' in request.args:
-        ranking = rank(transcripts, request.args.get('query'))
-        if 'max' in request.args:
-          sliced = len(ranking) > int(request.args.get('max'))
-          ranking = ranking[:int(request.args.get('max'))]
-    elif 'similar' in request.args:
+    if 'query' in request.args and 'max' in request.args:
+        query_vector = vectorizer.transform([request.args.get('query')])
+        similarity_vector = (tfidf_matrix @ query_vector.T).toarray().squeeze()
+        ranking = np.argsort(similarity_vector)[::-1][:int(request.args.get('max'))].tolist()
         sliced = True
-        ranking = np.argsort(similarity_matrix[int(request.args.get('similar'))])[::-1][:int(request.args.get('max'))].tolist()
-        for video_name, video_id, chapters in transcripts:
-            for chapter_id, time_stamp_chapter, title, time_stamps in chapters:
-                if chapter_id in ranking:
-                    ranking[ranking.index(chapter_id)] = (video_name, video_id, title, chapter_id, False, [(time_stamps[0][0], time_stamps[0][2])])
-    return render_template('hedgy.html', topics=topics, ranking=ranking, sliced=sliced, args=request.args)
+    return render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, topics=topics, args=request.args)
