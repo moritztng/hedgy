@@ -1,10 +1,8 @@
 import numpy as np
-from nltk import download
+from preprocess import StemTokenizer
 from flask import render_template
 from os.path import join, abspath, dirname
 from pickle import load
-
-download('punkt')
 
 ''' def rank(transcripts, query):
     keywords = preprocess(query)
