@@ -70,9 +70,6 @@
     width: 100%;
     border-radius: 24px;
   }
-  .missing {
-    text-decoration: line-through;
-  }
 </style>
 <h1><a href="/">hedgy</a></h1>
 <form method="get">
@@ -82,11 +79,7 @@
 </form>
 {% if not ranking %}
   <p>
-    {% if args.get('query') %}
-      No results found
-    {% else %}
-      Search the Lex Fridman Podcast &#127908;
-    {% endif %}
+    Search the Lex Fridman Podcast &#127908;
   </p>
   <div class="topics">
     {% for topic in topics %}
@@ -97,24 +90,14 @@
       </form>
     {% endfor %}
   </div>
-{% endif %}
-{% for index in ranking %}
-  {% set time_stamp, video_id, title, transcript = chapters[index] %}
-  <a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}" class="chapter">
-    <h3>{{ title }}</h3>
-    <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="thumbnail">
-    {# {% if missing_keywords %}
-      <p>
-        <span>Missing:</span>
-        {% for keyword in missing_keywords %}
-          <span class="missing">{{ keyword }}</span>
-        {% endfor %}
-      </p>
-    {% endif %}
-    #}
-  </a>
-{% endfor %}
-{% if sliced %}
+{% else %}
+  {% for index in ranking %}
+    {% set time_stamp, video_id, title, transcript = chapters[index] %}
+    <a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}" class="chapter">
+      <h3>{{ title }}</h3>
+      <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="thumbnail">
+    </a>
+  {% endfor %}
   {% set max_old = args.get('max') | int %}
   <form method="get">
     <input type="hidden" name="query" value="{{ args.get('query') }}">
