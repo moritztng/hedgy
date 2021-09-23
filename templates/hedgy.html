@@ -79,7 +79,11 @@
 </form>
 {% if not ranking %}
   <p>
-    Search the Lex Fridman Podcast &#127908;
+    {% if args.get('query') and args.get('max') %}
+      No results found
+    {% else %}
+      Search the Lex Fridman Podcast &#127908;
+    {% endif %}
   </p>
   <div class="topics">
     {% for topic in topics %}
@@ -98,10 +102,12 @@
       <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="thumbnail">
     </a>
   {% endfor %}
-  {% set max_old = args.get('max') | int %}
-  <form method="get">
-    <input type="hidden" name="query" value="{{ args.get('query') }}">
-    <input type="hidden" name="max" value="{{ max_old + 50 }}">
-    <input type="submit" value="Show more">
-  </form>
+  {% if sliced %}
+    {% set max_old = args.get('max') | int %}
+    <form method="get">
+      <input type="hidden" name="query" value="{{ args.get('query') }}">
+      <input type="hidden" name="max" value="{{ max_old + 50 }}">
+      <input type="submit" value="Show more">
+    </form>
+  {% endif %}
 {% endif %}
