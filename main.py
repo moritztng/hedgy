@@ -17,7 +17,7 @@ def hedgy(request):
     ranking, sliced = [], False
     if 'query' in request.args and 'max' in request.args:
         query_vector = vectorizer.transform([request.args.get('query')])
-        if np.any(query_vector):
+        if query_vector.sum():
             similarity_vector = (tfidf_matrix @ query_vector.T).toarray().squeeze()
             max_chapters, max_request = np.count_nonzero(similarity_vector), int(request.args.get('max')))
             if max_request < max_chapters:
