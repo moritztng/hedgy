@@ -1,8 +1,9 @@
 import numpy as np
-from preprocess import StemTokenizer
+from preprocess import Vectorizer
 from flask import render_template
 from os.path import join, abspath, dirname
 from pickle import load
+from scipy.sparse import load_npz
 
 ''' def rank(transcripts, query):
     keywords = preprocess(query)
@@ -24,7 +25,7 @@ with open(join(hedgy_path, 'chapters.p'), 'rb') as chapters_f, open(join(hedgy_p
     chapters = load(chapters_f)
     vectorizer = load(vectorizer_f)
     topics = topics_f.read().splitlines()
-tfidf_matrix = np.load(join(hedgy_path, 'tfidf.npy'))
+tfidf_matrix = load_npz(join(hedgy_path, 'tfidf.npz'))
 similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
 def hedgy(request):
