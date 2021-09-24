@@ -43,10 +43,13 @@
     padding: 10px;
   }
   .chapter {
-    display: block;
+    margin: 35px 0px;
+  }
+  .chapter a {
+    display: inline-block;
     width: 320px;
     max-width: 80%;
-    margin: 35px auto;
+    margin-bottom: 10px;
   }
   .chapter img {
     width: 100%;
@@ -65,15 +68,17 @@
 {% if ranking %}
   {% for index in ranking %}
     {% set time_stamp, video_id, title, transcript = chapters[index] %}
-    <a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}" class="chapter">
-      <h3>{{ title }}</h3>
-      <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="thumbnail">
-    </a>
-    <form method="get">
-      <input type="hidden" name="similar" value="{{ index }}">
-      <input type="hidden" name="max" value="50">
-      <input type="submit" value="Show similar">
-    </form>
+    <div class="chapter">
+      <a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}">
+        <h3>{{ title }}</h3>
+        <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="thumbnail">
+      </a>
+      <form method="get">
+        <input type="hidden" name="similar" value="{{ index }}">
+        <input type="hidden" name="max" value="50">
+        <input type="submit" value="Show similar">
+      </form>
+    </div>
   {% endfor %}
   {% if sliced %}
     {% set max_old = args.get('max') | int %}

@@ -6,10 +6,9 @@ from pickle import load
 from scipy.sparse import load_npz
 
 hedgy_path = dirname(abspath(__file__))
-with open(join(hedgy_path, 'chapters.p'), 'rb') as chapters_f, open(join(hedgy_path, 'vectorizer.p'), 'rb') as vectorizer_f, open(join(hedgy_path, 'topics')) as topics_f:
+with open(join(hedgy_path, 'chapters.p'), 'rb') as chapters_f, open(join(hedgy_path, 'vectorizer.p'), 'rb') as vectorizer_f:
     chapters = load(chapters_f)
     vectorizer = load(vectorizer_f)
-    topics = topics_f.read().splitlines()
 tfidf_matrix = load_npz(join(hedgy_path, 'tfidf.npz'))
 similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
@@ -29,4 +28,4 @@ def hedgy(request):
             ranking = np.argsort(similarity_vector)[::-1][:max_chapters].tolist()
     else:
         ranking = np.random.permutation(len(chapters))[:50].tolist()
-    return render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, topics=topics, args=request.args)
+    return render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, args=request.args)
