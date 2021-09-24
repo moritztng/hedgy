@@ -49,7 +49,6 @@
     display: inline-block;
     width: 320px;
     max-width: 80%;
-    margin-bottom: 10px;
   }
   .chapter img {
     width: 100%;
@@ -70,8 +69,8 @@
     {% set time_stamp, video_id, title, transcript = chapters[index] %}
     <div class="chapter">
       <a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}">
-        <h3>{{ title }}</h3>
         <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="thumbnail">
+        <h3>{{ title }}</h3>
       </a>
       <form method="get">
         <input type="hidden" name="similar" value="{{ index }}">
