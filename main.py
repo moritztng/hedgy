@@ -14,7 +14,7 @@ tfidf_matrix = load_npz(join(hedgy_path, 'tfidf.npz'))
 similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
 def hedgy(request):
-    ranking, sliced = [], False
+    sliced = False
     if 'query' in request.args and 'max' in request.args:
         query_vector = vectorizer.transform([request.args.get('query')])
         if query_vector.sum():
@@ -24,4 +24,6 @@ def hedgy(request):
                 max_chapters = max_request
                 sliced = True
             ranking = np.argsort(similarity_vector)[::-1][:max_chapters].tolist()
+    else:
+        ranking = np.random.permutation(len(chapters))[:50].tolist()
     return render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, topics=topics, args=request.args)
