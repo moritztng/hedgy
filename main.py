@@ -19,7 +19,7 @@ def hedgy(request):
         query_vector = vectorizer.transform([request.args.get('query')])
         if query_vector.sum():
             similarity_vector = (tfidf_matrix @ query_vector.T).toarray().squeeze()
-            max_chapters, max_request = np.count_nonzero(similarity_vector), int(request.args.get('max')))
+            max_chapters, max_request = np.count_nonzero(similarity_vector), int(request.args.get('max'))
             if max_request < max_chapters:
                 max_chapters = max_request
                 sliced = True
