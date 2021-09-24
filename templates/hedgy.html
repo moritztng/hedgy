@@ -42,24 +42,6 @@
     cursor: pointer;
     padding: 10px;
   }
-  .topics {
-    display: inline-block;
-    width: 900px;
-    max-width: 100%;
-  }
-  .topics form {
-    display: inline-block;
-    width: 175px;
-    height: 175px;
-    max-width: calc(50% - 42px);
-    margin: 20px;
-  }
-  .topics input[type=submit] {
-    width: 100%;
-    height: 100%;
-    vertical-align: middle;
-    white-space: normal;
-  }
   .chapter {
     display: block;
     width: 320px;
@@ -77,37 +59,34 @@
   <input type="hidden" name="max" value="50">
   <input type="submit" value="Search">
 </form>
-{% if not ranking %}
-  <p>
-    {% if args.get('query') and args.get('max') %}
-      No results found
-    {% else %}
-      Search the Lex Fridman Podcast &#127908;
-    {% endif %}
-  </p>
-  <div class="topics">
-    {% for topic in topics %}
-      <form method="get">
-        <input type="hidden" name="query" value="{{ topic }}">
-        <input type="hidden" name="max" value="50">
-        <input type="submit" value="{{ topic }}">
-      </form>
-    {% endfor %}
-  </div>
-{% else %}
+{% if not (args.get('max') and (args.get('query') or args.get('similar'))) %}
+  <p>Search the Lex Fridman Podcast &#127908;</p>
+{% endif %}
+{% if ranking %}
   {% for index in ranking %}
     {% set time_stamp, video_id, title, transcript = chapters[index] %}
     <a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}" class="chapter">
       <h3>{{ title }}</h3>
       <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="thumbnail">
     </a>
+    <form method="get">
+      <input type="hidden" name="similar" value="{{ index }}">
+      <input type="hidden" name="max" value="50">
+      <input type="submit" value="Show similar">
+    </form>
   {% endfor %}
   {% if sliced %}
     {% set max_old = args.get('max') | int %}
     <form method="get">
-      <input type="hidden" name="query" value="{{ args.get('query') }}">
+      {% if args.get('query') %}
+        <input type="hidden" name="query" value="{{ args.get('query') }}">
+      {% else %}
+        <input type="hidden" name="similar" value="{{ args.get('similar') }}">
+      {% endif %}
       <input type="hidden" name="max" value="{{ max_old + 50 }}">
       <input type="submit" value="Show more">
     </form>
   {% endif %}
+{% else %}
+  <p>No results found</p>
 {% endif %}

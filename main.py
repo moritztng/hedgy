@@ -14,11 +14,14 @@ tfidf_matrix = load_npz(join(hedgy_path, 'tfidf.npz'))
 similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
 def hedgy(request):
-    sliced = False
-    if 'query' in request.args and 'max' in request.args:
-        query_vector = vectorizer.transform([request.args.get('query')])
-        if query_vector.sum():
+    ranking, sliced = [], False
+    if 'max' in request.args and ('query' in request.args or 'similar' in request.args):
+        if 'query' in request.args:
+            query_vector = vectorizer.transform([request.args.get('query')])
             similarity_vector = (tfidf_matrix @ query_vector.T).toarray().squeeze()
+        else:
+            similarity_vector = similarity_matrix[int(request.args.get('similar'))]
+        if np.any(similarity_vector):
             max_chapters, max_request = np.count_nonzero(similarity_vector), int(request.args.get('max'))
             if max_request < max_chapters:
                 max_chapters = max_request
