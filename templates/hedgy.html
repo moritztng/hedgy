@@ -66,12 +66,13 @@
 {% endif %}
 {% if ranking %}
   {% for index in ranking %}
-    {% set time_stamp, video_id, title, transcript = chapters[index] %}
+    {% set time_stamp, youtube_id, spotify_id, chapter_title, transcript = chapters[index] %}
     <div class="chapter">
-      <a href="https://youtu.be/{{ video_id }}?t={{ time_stamp }}">
-        <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="thumbnail">
-        <h3>{{ title }}</h3>
+      <a href="https://youtu.be/{{ youtube_id }}?t={{ time_stamp }}">
+        <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
+        <h3>{{ chapter_title }}</h3>
       </a>
+      <a href="https://open.spotify.com/episode/{{ spotify_id }}?t={{ time_stamp }}">Listen on Spotify</a>
       <form method="get">
         <input type="hidden" name="similar" value="{{ index }}">
         <input type="hidden" name="max" value="50">
