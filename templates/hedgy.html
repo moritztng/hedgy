@@ -43,16 +43,16 @@
     padding: 10px;
   }
   .chapter {
-    margin: 35px 0px;
-  }
-  .chapter a {
-    display: inline-block;
     width: 320px;
     max-width: 80%;
+    margin: 35px auto;
   }
   .chapter img {
     width: 100%;
     border-radius: 24px;
+  }
+  .chapter form {
+    display: inline;
   }
 </style>
 <h1><a href="/">hedgy</a></h1>
@@ -68,11 +68,13 @@
   {% for index in ranking %}
     {% set time_stamp, youtube_id, spotify_id, chapter_title, transcript = chapters[index] %}
     <div class="chapter">
-      <a href="https://youtu.be/{{ youtube_id }}?t={{ time_stamp }}">
-        <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
-        <h3>{{ chapter_title }}</h3>
-      </a>
-      <a href="https://open.spotify.com/episode/{{ spotify_id }}?t={{ time_stamp }}">Listen on Spotify</a>
+      <h3>{{ chapter_title }}</h3>
+      <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
+      <iframe src="https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp }}" width="100%" height="232" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+      <form action="https://youtu.be/{{ youtube_id }}" method="get">
+        <input type="hidden" name="t" value="{{ time_stamp }}">
+        <input type="submit" value="Watch on YouTube">
+      </form>
       <form method="get">
         <input type="hidden" name="similar" value="{{ index }}">
         <input type="hidden" name="max" value="50">
