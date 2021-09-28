@@ -75,6 +75,7 @@
     <div class="chapter">
       <h3>{{ chapter_title }}</h3>
       <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
+      <input type="submit" value="Play" onclick="document.getElementsByTagName('iframe')[0].src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp }}'">
       <form action="https://youtu.be/{{ youtube_id }}" method="get">
         <input type="hidden" name="t" value="{{ time_stamp }}">
         <input type="submit" value="Watch on YouTube">
