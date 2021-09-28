@@ -42,16 +42,21 @@
     cursor: pointer;
     padding: 10px;
   }
-  .chapter {
+  #chapters {
+    display: inline-block;
+    max-width: 1100px;
+  }
+  #chapters div {
+    display: inline-block;
     width: 320px;
     max-width: 80%;
-    margin: 35px auto;
+    margin: 10px;
   }
-  .chapter img {
+  #chapters img {
     width: 100%;
     border-radius: 24px;
   }
-  .chapter form {
+  #chapters form {
     display: inline;
   }
   #play-bar {
@@ -71,23 +76,25 @@
   <p>Search the Lex Fridman Podcast &#127908;</p>
 {% endif %}
 {% if ranking %}
-  {% for index in ranking %}
-    {% set time_stamp, youtube_id, spotify_id, chapter_title, transcript = chapters[index] %}
-    <div class="chapter">
-      <h3>{{ chapter_title }}</h3>
-      <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
-      <input type="submit" value="Spotify" onclick="document.getElementById('play-bar').src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp }}';document.getElementById('play-bar').style.display='block';">
-      <form action="https://youtu.be/{{ youtube_id }}" method="get">
-        <input type="hidden" name="t" value="{{ time_stamp }}">
-        <input type="submit" value="YouTube">
-      </form>
-      <form method="get">
-        <input type="hidden" name="similar" value="{{ index }}">
-        <input type="hidden" name="max" value="50">
-        <input type="submit" value="Show similar">
-      </form>
-    </div>
-  {% endfor %}
+  <div id="chapters">
+    {% for index in ranking %}
+      {% set time_stamp, youtube_id, spotify_id, chapter_title, transcript = chapters[index] %}
+      <div>
+        <h3>{{ chapter_title }}</h3>
+        <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
+        <input type="submit" value="Spotify" onclick="document.getElementById('play-bar').src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp }}';document.getElementById('play-bar').style.display='block';">
+        <form action="https://youtu.be/{{ youtube_id }}" method="get">
+          <input type="hidden" name="t" value="{{ time_stamp }}">
+          <input type="submit" value="YouTube">
+        </form>
+        <form method="get">
+          <input type="hidden" name="similar" value="{{ index }}">
+          <input type="hidden" name="max" value="50">
+          <input type="submit" value="Show similar">
+        </form>
+      </div>
+    {% endfor %}
+  </div>
   {% if sliced %}
     {% set max_old = args.get('max') | int %}
     <form method="get">
