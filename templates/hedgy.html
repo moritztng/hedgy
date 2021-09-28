@@ -42,6 +42,11 @@
     cursor: pointer;
     padding: 10px;
   }
+  iframe {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+  }
   .chapter {
     width: 320px;
     max-width: 80%;
@@ -70,7 +75,6 @@
     <div class="chapter">
       <h3>{{ chapter_title }}</h3>
       <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
-      <iframe src="https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp }}" width="100%" height="232" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
       <form action="https://youtu.be/{{ youtube_id }}" method="get">
         <input type="hidden" name="t" value="{{ time_stamp }}">
         <input type="submit" value="Watch on YouTube">
@@ -94,6 +98,7 @@
       <input type="submit" value="Show more">
     </form>
   {% endif %}
+  <iframe src="https://open.spotify.com/embed/episode/{{ chapters[ranking[0]][2] }}?theme=0&amp;t={{ chapters[ranking[0]][0] }}" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
 {% else %}
   <p>No results found</p>
 {% endif %}
