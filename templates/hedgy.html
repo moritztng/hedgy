@@ -43,6 +43,7 @@
     padding: 10px;
   }
   iframe {
+    display: none;
     position: fixed;
     bottom: 0px;
     left: 0px;
@@ -75,7 +76,7 @@
     <div class="chapter">
       <h3>{{ chapter_title }}</h3>
       <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
-      <input type="submit" value="Play" onclick="document.getElementsByTagName('iframe')[0].src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp }}'">
+      <input type="submit" value="Play" onclick="document.getElementsByTagName('iframe')[0].src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp }}';document.getElementsByTagName('iframe')[0].style.display='block';">
       <form action="https://youtu.be/{{ youtube_id }}" method="get">
         <input type="hidden" name="t" value="{{ time_stamp }}">
         <input type="submit" value="Watch on YouTube">
@@ -99,7 +100,7 @@
       <input type="submit" value="Show more">
     </form>
   {% endif %}
-  <iframe src="https://open.spotify.com/embed/episode/{{ chapters[ranking[0]][2] }}?theme=0&amp;t={{ chapters[ranking[0]][0] }}" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+  <iframe src="" width="100%" height="152" onload="document.getElementById('play-button').click();" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
 {% else %}
   <p>No results found</p>
 {% endif %}
