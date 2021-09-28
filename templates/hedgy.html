@@ -61,6 +61,9 @@
   }
   #play-bar {
     display: none;
+    height: 152px;
+  }
+  #play-bar iframe {
     position: fixed;
     bottom: 0px;
     left: 0px;
@@ -82,7 +85,7 @@
       <div>
         <h3>{{ chapter_title }}</h3>
         <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
-        <input type="submit" value="Spotify" onclick="document.getElementById('play-bar').src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp }}';document.getElementById('play-bar').style.display='block';">
+        <input type="submit" value="Spotify" onclick="document.querySelector('#play-bar iframe').src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp }}';document.getElementById('play-bar').style.display='block';">
         <form action="https://youtu.be/{{ youtube_id }}" method="get">
           <input type="hidden" name="t" value="{{ time_stamp }}">
           <input type="submit" value="YouTube">
@@ -107,7 +110,9 @@
       <input type="submit" value="Show more">
     </form>
   {% endif %}
-  <iframe id="play-bar" src="" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+  <div id="play-bar">
+    <iframe src="" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+  </div>
 {% else %}
   <p>No results found</p>
 {% endif %}
