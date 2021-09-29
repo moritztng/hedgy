@@ -99,14 +99,15 @@
     {% endfor %}
   </div>
   {% if sliced %}
-    {% set max_old = args.get('max') | int %}
     <form method="get">
       {% if args.get('query') %}
         <input type="hidden" name="query" value="{{ args.get('query') }}">
-      {% else %}
+      {% elif args.get('similar') %}
         <input type="hidden" name="similar" value="{{ args.get('similar') }}">
+      {% elif seed %}
+        <input type="hidden" name="seed" value="{{ seed }}">
       {% endif %}
-      <input type="hidden" name="max" value="{{ max_old + 50 }}">
+      <input type="hidden" name="max" value="{{ max_request + 50 }}">
       <input type="submit" value="Show more">
     </form>
   {% endif %}
