@@ -84,11 +84,11 @@
 {% if ranking %}
   <div id="chapters">
     {% for index in ranking %}
-      {% set time_stamp, youtube_id, spotify_id, chapter_title, transcript = chapters[index] %}
+      {% set time_stamp, time_difference, youtube_id, spotify_id, chapter_title, transcript = chapters[index] %}
       <div>
         <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
         <h3>{{ chapter_title }}</h3>
-        <input type="submit" value="Spotify" onclick="document.querySelector('#play-bar iframe').src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp }}';document.getElementById('play-bar').style.display='block';">
+        <input type="submit" value="Spotify" onclick="document.querySelector('#play-bar iframe').src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp + time_difference }}';document.getElementById('play-bar').style.display='block';">
         <form action="https://youtu.be/{{ youtube_id }}" method="get">
           <input type="hidden" name="t" value="{{ time_stamp }}">
           <input type="submit" value="YouTube">
