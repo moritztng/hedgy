@@ -12,7 +12,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   h1 {
-    font-size: 100px;
+    font-size: 90px;
     margin: 35px 0px;
   }
   a {
@@ -29,7 +29,7 @@
   }
   input[type=search] {
     width: 500px;
-    max-width: 70%;
+    max-width: 80%;
     padding: 10px 20px;
   }
   input[type=search]:focus {
@@ -42,81 +42,80 @@
     cursor: pointer;
     padding: 10px;
   }
-  .topics {
+  #search-form {
+    margin: 35px 0px; 
+  }
+  #chapters {
     display: inline-block;
-    width: 900px;
-    max-width: 100%;
+    max-width: 1200px;
   }
-  .topics form {
+  #chapters div {
     display: inline-block;
-    width: 175px;
-    height: 175px;
-    max-width: calc(50% - 42px);
-    margin: 20px;
-  }
-  .topics input[type=submit] {
-    width: 100%;
-    height: 100%;
-    vertical-align: middle;
-    white-space: normal;
-  }
-  .chapter {
-    display: block;
     width: 320px;
     max-width: 80%;
-    margin: 35px auto;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 24px;
+    background-color: rgb(30, 30, 30);
   }
-  .chapter img {
+  #chapters img {
     width: 100%;
     border-radius: 24px;
   }
-  .missing {
-    text-decoration: line-through;
+  #chapters form {
+    display: inline;
+  }
+  #play-bar {
+    display: none;
+    height: 152px;
+  }
+  #play-bar iframe {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
   }
 </style>
 <h1><a href="/">hedgy</a></h1>
-<form method="get">
-  <input type="search" name="query" required>
+<form id="search-form" method="get">
+  <input type="search" name="query" placeholder="Search the Lex Fridman Podcast" required>
   <input type="hidden" name="max" value="50">
-  <input type="submit" value="Search">
 </form>
-{% if not ranking %}
-  <p>
-    {% if args.get('query') %}
-      No results found
-    {% else %}
-      Search the Lex Fridman Podcast &#127908;
-    {% endif %}
-  </p>
-  <div class="topics">
-    {% for topic in topics %}
-      <form method="get">
-        <input type="hidden" name="query" value="{{ topic }}">
-        <input type="hidden" name="max" value="50">
-        <input type="submit" value="{{ topic }}">
-      </form>
+{% if ranking %}
+  <div id="chapters">
+    {% for index in ranking %}
+      {% set time_stamp, time_difference, youtube_id, spotify_id, chapter_title, transcript = chapters[index] %}
+      <div>
+        <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
+        <h3>{{ chapter_title }}</h3>
+        <input type="submit" value="Spotify" onclick="document.querySelector('#play-bar iframe').src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp + time_difference }}';document.getElementById('play-bar').style.display='block';">
+        <form action="https://youtu.be/{{ youtube_id }}" method="get">
+          <input type="hidden" name="t" value="{{ time_stamp }}">
+          <input type="submit" value="YouTube">
+        </form>
+        <form method="get">
+          <input type="hidden" name="similar" value="{{ index }}">
+          <input type="hidden" name="max" value="50">
+          <input type="submit" value="Show similar">
+        </form>
+      </div>
     {% endfor %}
   </div>
-{% endif %}
-{% for video_name, video_id, title, missing_keywords, time_stamps in ranking %}
-  <a href="https://youtu.be/{{ video_id }}?t={{ time_stamps[0][0] }}" class="chapter">
-    <h3>{{ title }}</h3>
-    <img src="https://img.youtube.com/vi/{{ video_id }}/mqdefault.jpg" alt="{{ video_name }}">
-    {% if missing_keywords %}
-      <p>
-        <span>Missing:</span>
-        {% for keyword in missing_keywords %}
-          <span class="missing">{{ keyword }}</span>
-        {% endfor %}
-      </p>
-    {% endif %}
-  </a>
-{% endfor %}
-{% if sliced %}
-  {% set max_old = args.get('max') | int %}
-  <form method="get">
-    <input type="hidden" name="query" value="{{ args.get('query') }}">
-    <input type="hidden" name="max" value="{{ max_old + 50 }}">
-    <input type="submit" value="Show more">
-  </form>
+  {% if sliced %}
+    <form method="get">
+      {% if args.get('query') %}
+        <input type="hidden" name="query" value="{{ args.get('query') }}">
+      {% elif args.get('similar') %}
+        <input type="hidden" name="similar" value="{{ args.get('similar') }}">
+      {% elif seed %}
+        <input type="hidden" name="seed" value="{{ seed }}">
+      {% endif %}
+      <input type="hidden" name="max" value="{{ max_request + 50 }}">
+      <input type="submit" value="Show more">
+    </form>
+  {% endif %}
+  <div id="play-bar">
+    <iframe src="" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+  </div>
+{% else %}
+  <p>No results found</p>
 {% endif %}

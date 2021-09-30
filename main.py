@@ -1,33 +1,40 @@
+import numpy as np
+from preprocess import Vectorizer
 from flask import render_template
-from preprocess import preprocess
 from os.path import join, abspath, dirname
+from random import randint
 from pickle import load
-
-def rank(transcripts, query):
-    keywords = preprocess(query)
-    ranking = {}
-    for video_name, video_id, chapters in transcripts:
-        for time_stamp_chapter, title, time_stamps in chapters:
-            for time_stamp, words, text in time_stamps:
-                missing_keywords = frozenset(keyword for keyword, keyword_stemmed in keywords if keyword_stemmed not in words)
-                if len(missing_keywords) < len(keywords):
-                    if (video_name, video_id, title, missing_keywords) in ranking:
-                        ranking[(video_name, video_id, title, missing_keywords)].append((time_stamp, text))
-                    else:
-                        ranking[(video_name, video_id, title, missing_keywords)] = [(time_stamp, text)]
-    ranking = [key + (value,) for key, value in ranking.items()]
-    return sorted(ranking, key=lambda x: (len(x[-2]), -len(x[-1])))
+from scipy.sparse import load_npz
 
 hedgy_path = dirname(abspath(__file__))
-with open(join(hedgy_path, 'transcripts.p'), 'rb') as transcripts_f, open(join(hedgy_path, 'topics')) as topics_f:
-    transcripts = load(transcripts_f)
-    topics = topics_f.read().splitlines()
+with open(join(hedgy_path, 'chapters.p'), 'rb') as chapters_f, open(join(hedgy_path, 'vectorizer.p'), 'rb') as vectorizer_f:
+    chapters = load(chapters_f)
+    vectorizer = load(vectorizer_f)
+tfidf_matrix = load_npz(join(hedgy_path, 'tfidf.npz'))
+similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
 def hedgy(request):
-    ranking, sliced = [], False
-    if 'query' in request.args:
-        ranking = rank(transcripts, request.args.get('query'))
-        if 'max' in request.args:
-            sliced = len(ranking) > int(request.args.get('max'))
-            ranking = ranking[:int(request.args.get('max'))]
-    return render_template('hedgy.html', topics=topics, ranking=ranking, sliced=sliced, args=request.args)
+    ranking, sliced, max_request, seed = [], False, 50, None
+    if 'max' in request.args:
+        max_request = int(request.args.get('max'))
+        if 'query' in request.args or 'similar' in request.args:
+            if 'query' in request.args:
+                query_vector = vectorizer.transform([request.args.get('query')])
+                similarity_vector = (tfidf_matrix @ query_vector.T).toarray().squeeze()
+            else:
+                similarity_vector = similarity_matrix[int(request.args.get('similar'))]
+            if np.any(similarity_vector):
+                max_chapters = np.count_nonzero(similarity_vector)
+                if max_request < max_chapters:
+                    max_chapters = max_request
+                    sliced = True
+                ranking = np.argsort(similarity_vector)[::-1][:max_chapters].tolist()
+        elif 'seed' in request.args:
+            seed = int(request.args.get('seed'))
+    else:
+        seed = randint(1, 1000000)
+    if seed:
+        np.random.seed(seed)
+        ranking = np.random.permutation(len(chapters))[:max_request].tolist()
+        sliced = True
+    return render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, max_request=max_request, seed=seed, args=request.args)

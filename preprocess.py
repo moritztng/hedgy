@@ -1,16 +1,17 @@
 from string import punctuation
-from nltk import word_tokenize, download
-from nltk.corpus import stopwords
+from nltk import download, word_tokenize
 from nltk.stem import PorterStemmer
+from numpy import float32
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-download('stopwords')
 download('punkt')
 
-def preprocess(text):
-    text = text.lower()
-    text = set(word_tokenize(text))
-    text = {word for word in text if not set(word) & set(punctuation)}
-    text = text - set(stopwords.words('english'))
-    stemmer = PorterStemmer()
-    text = {(word, stemmer.stem(word)) for word in text}
-    return text
+class StemTokenizer:
+    def __init__(self):
+        self.stemmer = PorterStemmer()
+    def __call__(self, chapter):
+        return [self.stemmer.stem(t) for t in word_tokenize(chapter) if not set(t) & set(punctuation)]
+
+class Vectorizer(TfidfVectorizer):
+    def __init__(self):
+        super().__init__(tokenizer=StemTokenizer(), dtype=float32)
