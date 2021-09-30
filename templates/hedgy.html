@@ -12,7 +12,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   h1 {
-    font-size: 100px;
+    font-size: 90px;
     margin: 35px 0px;
   }
   a {
@@ -41,6 +41,9 @@
   input[type=submit] {
     cursor: pointer;
     padding: 10px;
+  }
+  #search-form {
+    margin: 35px 0px; 
   }
   #chapters {
     display: inline-block;
@@ -73,14 +76,10 @@
   }
 </style>
 <h1><a href="/">hedgy</a></h1>
-<form method="get">
-  <input type="search" name="query" required>
+<form id="search-form" method="get">
+  <input type="search" name="query" placeholder="Search the Lex Fridman Podcast" required>
   <input type="hidden" name="max" value="50">
-  <input type="submit" value="Search">
 </form>
-{% if not (args.get('max') and (args.get('query') or args.get('similar'))) %}
-  <p>Search the Lex Fridman Podcast &#127908;</p>
-{% endif %}
 {% if ranking %}
   <div id="chapters">
     {% for index in ranking %}
