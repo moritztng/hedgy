@@ -13,7 +13,8 @@
   }
   h1 {
     font-size: 90px;
-    margin: 35px 0px;
+    margin-top: 10px;
+    margin-bottom: 35px; 
   }
   a {
     color: white;
@@ -42,8 +43,14 @@
     cursor: pointer;
     padding: 10px;
   }
+  #sign-in {
+    text-align: right;
+  }
+  .g_id_signin {
+    display: inline-block;
+  }
   #search-form {
-    margin: 35px 0px; 
+    margin: 35px 0px;
   }
   #chapters {
     display: inline-block;
@@ -76,18 +83,20 @@
   }
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<div id="g_id_onload"
-    data-client_id="1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com"
-    data-login_uri="https://your.domain/your_login_endpoint"
-    data-auto_prompt="false">
-</div>
-<div class="g_id_signin"
-    data-type="standard"
-    data-size="large"
-    data-theme="outline"
-    data-text="sign_in_with"
-    data-shape="rectangular"
-    data-logo_alignment="left">
+<div id="sign-in">
+  <div id="g_id_onload"
+      data-client_id="1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com"
+      data-login_uri="https://hedgy.app"
+      data-auto_prompt="false">
+  </div>
+  <div class="g_id_signin"
+      data-type="standard"
+      data-size="large"
+      data-theme="outline"
+      data-text="signin"
+      data-shape="pill"
+      data-logo_alignment="left">
+  </div>
 </div>
 <h1><a href="/">hedgy</a></h1>
 <form id="search-form" method="get">
