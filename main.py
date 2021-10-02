@@ -1,7 +1,7 @@
 import numpy as np
 from preprocess import Vectorizer
 from flask import render_template, make_response
-from google.oauth2 import id_token
+from google.oauth2.id_token import verify_oauth2_token
 from google.auth.transport import requests
 from os.path import join, abspath, dirname
 from random import randint
@@ -17,11 +17,12 @@ similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
 def hedgy(request):
     if request.method == 'POST':
-        idinfo = id_token.verify_oauth2_token(request.form['credential'], requests.Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
-        resp = make_response(idinfo['sub'])
-        resp.set_cookie('credential', request.form['credential'])
-        return resp
-    ranking, sliced, max_request, seed = [], False, 50, None
+        response = make_response('', 204)
+        response.set_cookie('credential', request.form['credential'], secure=True, httponly=True)
+        return response
+    ranking, sliced, max_request, seed, token = [], False, 50, None, None
+    if 'credential' in request.cookies:
+        token = verify_oauth2_token(request.cookies.get('credential'), requests.Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
     if 'max' in request.args:
         max_request = int(request.args.get('max'))
         if 'query' in request.args or 'similar' in request.args:
@@ -44,4 +45,4 @@ def hedgy(request):
         np.random.seed(seed)
         ranking = np.random.permutation(len(chapters))[:max_request].tolist()
         sliced = True
-    return render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, max_request=max_request, seed=seed, args=request.args)
+    return render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, max_request=max_request, seed=seed, token=token, args=request.args)
