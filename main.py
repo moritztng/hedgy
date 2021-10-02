@@ -22,7 +22,10 @@ def hedgy(request):
         return response
     ranking, sliced, max_request, seed, token = [], False, 50, None, None
     if 'credential' in request.cookies:
-        token = verify_oauth2_token(request.cookies.get('credential'), requests.Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
+        try:
+            token = verify_oauth2_token(request.cookies.get('credential'), requests.Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
+        except:
+            pass
     if 'max' in request.args:
         max_request = int(request.args.get('max'))
         if 'query' in request.args or 'similar' in request.args:
