@@ -1,6 +1,6 @@
 import numpy as np
 from preprocess import Vectorizer
-from flask import render_template
+from flask import render_template, make_response
 from os.path import join, abspath, dirname
 from random import randint
 from pickle import load
@@ -14,6 +14,10 @@ tfidf_matrix = load_npz(join(hedgy_path, 'tfidf.npz'))
 similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
 def hedgy(request):
+    if request.method == 'POST':
+        resp = make_response('', 204)
+        resp.set_cookie('credential', request.form['credential'])
+        return resp
     ranking, sliced, max_request, seed = [], False, 50, None
     if 'max' in request.args:
         max_request = int(request.args.get('max'))
