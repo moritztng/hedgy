@@ -15,15 +15,12 @@ with open(join(hedgy_path, 'chapters.p'), 'rb') as chapters_f, open(join(hedgy_p
 tfidf_matrix = load_npz(join(hedgy_path, 'tfidf.npz'))
 similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
-def hedgy(request):
-    if request.method == 'POST':
-        response = make_response('', 204)
-        response.set_cookie('credential', request.form['credential'], secure=True, httponly=True)
-        return response
+def hedgy(request): 
     ranking, sliced, max_request, seed, token = [], False, 50, None, None
-    if 'credential' in request.cookies:
+    credential = request.form['credential'] if request.method == 'POST' else request.cookies.get('credential')
+    if credential:
         try:
-            token = verify_oauth2_token(request.cookies.get('credential'), requests.Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
+            token = verify_oauth2_token(credential, requests.Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
         except:
             pass
     if 'max' in request.args:
@@ -48,4 +45,7 @@ def hedgy(request):
         np.random.seed(seed)
         ranking = np.random.permutation(len(chapters))[:max_request].tolist()
         sliced = True
-    return render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, max_request=max_request, seed=seed, token=token, args=request.args)
+    response = make_response(render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, max_request=max_request, seed=seed, token=token, args=request.args))
+    if request.method == 'POST':
+        response.set_cookie('credential', request.form['credential'], secure=True, httponly=True)
+    return response
