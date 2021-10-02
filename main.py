@@ -1,6 +1,8 @@
 import numpy as np
 from preprocess import Vectorizer
 from flask import render_template, make_response
+from google.oauth2 import id_token
+from google.auth.transport import requests
 from os.path import join, abspath, dirname
 from random import randint
 from pickle import load
@@ -15,7 +17,8 @@ similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
 def hedgy(request):
     if request.method == 'POST':
-        resp = make_response('', 204)
+        idinfo = id_token.verify_oauth2_token(request.form['credential'], requests.Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
+        resp = make_response(idinfo['sub'])
         resp.set_cookie('credential', request.form['credential'])
         return resp
     ranking, sliced, max_request, seed = [], False, 50, None
