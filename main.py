@@ -17,7 +17,10 @@ similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
 def hedgy(request): 
     ranking, sliced, max_request, seed, token = [], False, 50, None, None
-    credential = request.form['credential'] if request.method == 'POST' else request.cookies.get('credential')
+    if request.method == 'POST':
+        credential = request.form['credential'] if 'credential' in request.form else None
+    else:
+        credential = request.cookies.get('credential')
     if credential:
         try:
             token = verify_oauth2_token(credential, requests.Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
@@ -47,5 +50,8 @@ def hedgy(request):
         sliced = True
     response = make_response(render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, max_request=max_request, seed=seed, token=token, args=request.args))
     if request.method == 'POST':
-        response.set_cookie('credential', request.form['credential'], secure=True, httponly=True)
+        if 'credential' in request.form:
+            response.set_cookie('credential', request.form['credential'], secure=True, httponly=True)
+        else:
+            response.set_cookie('credential', '', expires=0)
     return response

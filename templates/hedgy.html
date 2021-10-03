@@ -43,11 +43,13 @@
     cursor: pointer;
     padding: 10px;
   }
-  #sign-in {
+  #header {
+    height: 45px;
     text-align: right;
   }
   .g_id_signin {
     display: inline-block;
+    overflow: hidden;
   }
   #search-form {
     margin: 35px 0px;
@@ -82,9 +84,11 @@
     left: 0px;
   }
 </style>
-<div id="sign-in">
+<div id="header">
   {% if token %}
-    {{ token['name'] }}
+    <form method="post">
+      <input type="submit" value="Sign out">
+    </form>
   {% else %}
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <div id="g_id_onload"
