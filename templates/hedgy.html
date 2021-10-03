@@ -118,7 +118,7 @@
       <div>
         <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
         <h3>{{ chapter_title }}</h3>
-        <input type="submit" value="Spotify" data-chapter="{{ index }}" data-name="spotify">
+        <input type="submit" value="Spotify" data-id="{{ spotify_id }}" data-time="{{ time_stamp + time_difference }}" data-chapter="{{ index }}" data-name="spotify">
         <form action="https://youtu.be/{{ youtube_id }}" method="get">
           <input type="hidden" name="t" value="{{ time_stamp }}">
           <input type="submit" value="YouTube" data-chapter="{{ index }}" data-name="youtube">
@@ -152,7 +152,7 @@
 {% endif %}
 <script>
   document.querySelector('input[value=Spotify]').addEventListener('click', function() {
-    document.querySelector('#play-bar iframe').src = 'https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp + time_difference }}';
+    document.querySelector('#play-bar iframe').src = `https://open.spotify.com/embed/episode/${this.getAttribute('data-id')}?theme=0&amp;t=${this.getAttribute('data-time')}`;
     document.getElementById('play-bar').style.display = 'block';
   });
   document.querySelectorAll('.chapters input[type=submit]').forEach(function(button) {
