@@ -118,15 +118,15 @@
       <div>
         <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
         <h3>{{ chapter_title }}</h3>
-        <input type="submit" value="Spotify" onclick="document.querySelector('#play-bar iframe').src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp + time_difference }}';document.getElementById('play-bar').style.display='block';">
+        <input type="submit" value="Spotify" data-chapter="{{ index }}" data-name="spotify">
         <form action="https://youtu.be/{{ youtube_id }}" method="get">
           <input type="hidden" name="t" value="{{ time_stamp }}">
-          <input type="submit" value="YouTube">
+          <input type="submit" value="YouTube" data-chapter="{{ index }}" data-name="youtube">
         </form>
         <form method="get">
           <input type="hidden" name="similar" value="{{ index }}">
           <input type="hidden" name="max" value="50">
-          <input type="submit" value="Show similar">
+          <input type="submit" value="Show similar" data-chapter="{{ index }}" data-name="similar">
         </form>
       </div>
     {% endfor %}
@@ -150,3 +150,15 @@
 {% else %}
   <p>No results found</p>
 {% endif %}
+<script>
+  document.querySelector('input[value=Spotify]').addEventListener('click', function() {
+    document.querySelector('#play-bar iframe').src = 'https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp + time_difference }}';
+    document.getElementById('play-bar').style.display = 'block';
+  });
+  document.querySelectorAll('.chapters input[type=submit]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      document.cookie = `clicks=${document.cookie.split('; ').find(row => row.startsWith('clicks=')).split('=')[1]}${this.getAttribute('data-chapter')} ${this.getAttribute('data-name')},`;
+    });
+  });
+  document.cookie = 'clicks= '
+</script>
