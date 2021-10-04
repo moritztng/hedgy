@@ -28,18 +28,18 @@
     border-radius: 24px;
     background-color: rgb(50, 50, 50);
   }
-  input[type=search] {
+  input[type="search"] {
     width: 500px;
     max-width: 80%;
     padding: 10px 20px;
   }
-  input[type=search]:focus {
+  input[type="search"]:focus {
     outline: none;
   }
-  input[type=search]::-webkit-search-cancel-button {
+  input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
   }
-  input[type=submit] {
+  input[type="submit"] {
     cursor: pointer;
     padding: 10px;
   }
@@ -151,14 +151,14 @@
   <p>No results found</p>
 {% endif %}
 <script>
-  document.querySelectorAll('input[value=Spotify]').forEach(function(button) {
+  document.querySelectorAll('input[value="Spotify"]').forEach(function(button) {
     button.addEventListener('click', function() {
       document.querySelector('#play-bar iframe').src = `https://open.spotify.com/embed/episode/${this.getAttribute('data-id')}?theme=0&amp;t=${this.getAttribute('data-time')}`;
       document.getElementById('play-bar').style.display = 'block';
     });
   });
   {% if token %}
-    document.querySelectorAll('#chapters input[type=submit]').forEach(function(button) {
+    document.querySelectorAll('#chapters input[type="submit"]').forEach(function(button) {
       button.addEventListener('click', function() {
         document.cookie = `clicks=${document.cookie.split('; ').find(row => row.startsWith('clicks=')).split('=')[1]}${this.getAttribute('data-chapter')} ${this.getAttribute('data-name')},`;
       });

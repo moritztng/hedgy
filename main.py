@@ -2,7 +2,7 @@ import numpy as np
 from preprocess import Vectorizer
 from flask import render_template, make_response
 from google.oauth2.id_token import verify_oauth2_token
-from google.auth.transport import requests
+from google.auth.transport.requests import Request
 from google.cloud import firestore
 from os.path import join, abspath, dirname
 from random import randint
@@ -26,15 +26,15 @@ def hedgy(request):
         credential = request.cookies.get('credential')
     if credential:
         try:
-            token = verify_oauth2_token(credential, requests.Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
+            token = verify_oauth2_token(credential, Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
         except:
             pass
     if token:
         user_doc = database.collection('users').document(token['sub'])
-        if request.method == 'POST':
+        if not user_doc.get().exists:
             user_doc.set({'email': token['email'], 'given_name': token['given_name'], 'family_name': token['family_name'], 'picture': token['picture'], 'clicks': []})
         if request.cookies.get('clicks'):
-            user_doc.update({'clicks': firestore.ArrayUnion(request.cookies.get('clicks').split(','))})
+            user_doc.update({'clicks': firestore.ArrayUnion(request.cookies.get('clicks')[:-1].split(','))})
     if 'max' in request.args:
         max_request = int(request.args.get('max'))
         if 'query' in request.args or 'similar' in request.args:
@@ -64,5 +64,7 @@ def hedgy(request):
         else:
             response.set_cookie('credential', '', expires=0)
     if token:
-        response.set_cookie('clicks', '')
+        response.set_cookie('clicks', '', secure=True)
+    elif 'clicks' in request.cookies:
+        response.set_cookie('clicks', '', expires=0)
     return response
