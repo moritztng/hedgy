@@ -13,7 +13,8 @@
   }
   h1 {
     font-size: 90px;
-    margin: 35px 0px;
+    margin-top: 10px;
+    margin-bottom: 35px; 
   }
   a {
     color: white;
@@ -27,23 +28,31 @@
     border-radius: 24px;
     background-color: rgb(50, 50, 50);
   }
-  input[type=search] {
+  input[type="search"] {
     width: 500px;
     max-width: 80%;
     padding: 10px 20px;
   }
-  input[type=search]:focus {
+  input[type="search"]:focus {
     outline: none;
   }
-  input[type=search]::-webkit-search-cancel-button {
+  input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
   }
-  input[type=submit] {
+  input[type="submit"] {
     cursor: pointer;
     padding: 10px;
   }
+  #header {
+    height: 45px;
+    text-align: right;
+  }
+  .g_id_signin {
+    display: inline-block;
+    overflow: hidden;
+  }
   #search-form {
-    margin: 35px 0px; 
+    margin: 35px 0px;
   }
   #chapters {
     display: inline-block;
@@ -75,6 +84,28 @@
     left: 0px;
   }
 </style>
+<div id="header">
+  {% if token %}
+    <form method="post">
+      <input type="submit" value="Sign out">
+    </form>
+  {% else %}
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div id="g_id_onload"
+        data-client_id="1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com"
+        data-login_uri="https://hedgy.app"
+        data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin"
+        data-type="standard"
+        data-size="large"
+        data-theme="outline"
+        data-text="signin"
+        data-shape="pill"
+        data-logo_alignment="left">
+    </div>
+  {% endif %}
+</div>
 <h1><a href="/">hedgy</a></h1>
 <form id="search-form" method="get">
   <input type="search" name="query" placeholder="Search the Lex Fridman Podcast" required>
@@ -87,15 +118,15 @@
       <div>
         <img src="https://img.youtube.com/vi/{{ youtube_id }}/mqdefault.jpg" alt="thumbnail">
         <h3>{{ chapter_title }}</h3>
-        <input type="submit" value="Spotify" onclick="document.querySelector('#play-bar iframe').src='https://open.spotify.com/embed/episode/{{ spotify_id }}?theme=0&amp;t={{ time_stamp + time_difference }}';document.getElementById('play-bar').style.display='block';">
+        <input type="submit" value="Spotify" data-id="{{ spotify_id }}" data-time="{{ time_stamp + time_difference }}" data-chapter="{{ index }}" data-name="spotify">
         <form action="https://youtu.be/{{ youtube_id }}" method="get">
           <input type="hidden" name="t" value="{{ time_stamp }}">
-          <input type="submit" value="YouTube">
+          <input type="submit" value="YouTube" data-chapter="{{ index }}" data-name="youtube">
         </form>
         <form method="get">
           <input type="hidden" name="similar" value="{{ index }}">
           <input type="hidden" name="max" value="50">
-          <input type="submit" value="Show similar">
+          <input type="submit" value="Show similar" data-chapter="{{ index }}" data-name="similar">
         </form>
       </div>
     {% endfor %}
@@ -119,3 +150,18 @@
 {% else %}
   <p>No results found</p>
 {% endif %}
+<script>
+  document.querySelectorAll('input[value="Spotify"]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      document.querySelector('#play-bar iframe').src = `https://open.spotify.com/embed/episode/${this.getAttribute('data-id')}?theme=0&t=${this.getAttribute('data-time')}`;
+      document.getElementById('play-bar').style.display = 'block';
+    });
+  });
+  {% if token %}
+    document.querySelectorAll('#chapters input[type="submit"]').forEach(function(button) {
+      button.addEventListener('click', function() {
+        document.cookie = `clicks=${document.cookie.split('; ').find(row => row.startsWith('clicks=')).split('=')[1]}${this.getAttribute('data-chapter')} ${this.getAttribute('data-name')},`;
+      });
+    });
+  {% endif %}
+</script>

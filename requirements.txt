@@ -1,3 +1,6 @@
 nltk==3.6.2
 numpy==1.21.2
 scikit-learn==0.24.2
+requests==2.26.0
+google-auth==2.2.1
+google-cloud-firestore==2.3.4

@@ -1,10 +1,15 @@
 import numpy as np
 from preprocess import Vectorizer
-from flask import render_template
+from flask import render_template, make_response
+from google.oauth2.id_token import verify_oauth2_token
+from google.auth.transport.requests import Request
+from google.cloud import firestore
 from os.path import join, abspath, dirname
 from random import randint
 from pickle import load
 from scipy.sparse import load_npz
+
+database = firestore.Client()
 
 hedgy_path = dirname(abspath(__file__))
 with open(join(hedgy_path, 'chapters.p'), 'rb') as chapters_f, open(join(hedgy_path, 'vectorizer.p'), 'rb') as vectorizer_f:
@@ -13,8 +18,23 @@ with open(join(hedgy_path, 'chapters.p'), 'rb') as chapters_f, open(join(hedgy_p
 tfidf_matrix = load_npz(join(hedgy_path, 'tfidf.npz'))
 similarity_matrix = np.load(join(hedgy_path, 'similarity.npy'))
 
-def hedgy(request):
-    ranking, sliced, max_request, seed = [], False, 50, None
+def hedgy(request): 
+    ranking, sliced, max_request, seed, token = [], False, 50, None, None
+    if request.method == 'POST':
+        credential = request.form['credential'] if 'credential' in request.form else None
+    else:
+        credential = request.cookies.get('credential')
+    if credential:
+        try:
+            token = verify_oauth2_token(credential, Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
+        except:
+            pass
+    if token:
+        user_doc = database.collection('users').document(token['sub'])
+        if not user_doc.get().exists:
+            user_doc.set({'email': token['email'], 'given_name': token['given_name'], 'family_name': token['family_name'], 'picture': token['picture'], 'clicks': []})
+        if request.cookies.get('clicks'):
+            user_doc.update({'clicks': firestore.ArrayUnion(request.cookies.get('clicks')[:-1].split(','))})
     if 'max' in request.args:
         max_request = int(request.args.get('max'))
         if 'query' in request.args or 'similar' in request.args:
@@ -37,4 +57,14 @@ def hedgy(request):
         np.random.seed(seed)
         ranking = np.random.permutation(len(chapters))[:max_request].tolist()
         sliced = True
-    return render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, max_request=max_request, seed=seed, args=request.args)
+    response = make_response(render_template('hedgy.html', chapters=chapters, ranking=ranking, sliced=sliced, max_request=max_request, seed=seed, token=token, args=request.args))
+    if request.method == 'POST':
+        if 'credential' in request.form:
+            response.set_cookie('credential', request.form['credential'], secure=True, httponly=True)
+        else:
+            response.set_cookie('credential', '', expires=0)
+    if token:
+        response.set_cookie('clicks', '', secure=True)
+    elif 'clicks' in request.cookies:
+        response.set_cookie('clicks', '', expires=0)
+    return response
