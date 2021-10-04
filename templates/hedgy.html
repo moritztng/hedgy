@@ -160,7 +160,7 @@
   {% if token %}
     document.querySelectorAll('#chapters input[type="submit"]').forEach(function(button) {
       button.addEventListener('click', function() {
-        document.cookie = `clicks=${document.cookie.split('; ').find(row => row.startsWith('clicks=')).split('=')[1]}${this.getAttribute('data-chapter')} ${this.getAttribute('data-name')},`;
+        document.cookie = `__session=${document.cookie.split('; ').find(row => row.startsWith('__session=')).split('=')[1]}${this.getAttribute('data-chapter')} ${this.getAttribute('data-name')},`;
       });
     });
   {% endif %}
