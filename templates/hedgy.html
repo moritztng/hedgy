@@ -151,14 +151,16 @@
   <p>No results found</p>
 {% endif %}
 <script>
-  document.querySelector('input[value=Spotify]').addEventListener('click', function() {
-    document.querySelector('#play-bar iframe').src = `https://open.spotify.com/embed/episode/${this.getAttribute('data-id')}?theme=0&amp;t=${this.getAttribute('data-time')}`;
-    document.getElementById('play-bar').style.display = 'block';
+  document.querySelectorAll('input[value=Spotify]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      document.querySelector('#play-bar iframe').src = `https://open.spotify.com/embed/episode/${this.getAttribute('data-id')}?theme=0&amp;t=${this.getAttribute('data-time')}`;
+      document.getElementById('play-bar').style.display = 'block';
+    });
   });
-  document.querySelectorAll('.chapters input[type=submit]').forEach(function(button) {
+  document.querySelectorAll('#chapters input[type=submit]').forEach(function(button) {
     button.addEventListener('click', function() {
       document.cookie = `clicks=${document.cookie.split('; ').find(row => row.startsWith('clicks=')).split('=')[1]}${this.getAttribute('data-chapter')} ${this.getAttribute('data-name')},`;
     });
   });
-  document.cookie = 'clicks= '
+  document.cookie = 'clicks= ';
 </script>
