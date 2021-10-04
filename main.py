@@ -3,13 +3,13 @@ from preprocess import Vectorizer
 from flask import render_template, make_response
 from google.oauth2.id_token import verify_oauth2_token
 from google.auth.transport import requests
-from google.cloud.firestore import Client
+from google.cloud import firestore
 from os.path import join, abspath, dirname
 from random import randint
 from pickle import load
 from scipy.sparse import load_npz
 
-database = Client()
+database = firestore.Client()
 
 hedgy_path = dirname(abspath(__file__))
 with open(join(hedgy_path, 'chapters.p'), 'rb') as chapters_f, open(join(hedgy_path, 'vectorizer.p'), 'rb') as vectorizer_f:
@@ -29,9 +29,12 @@ def hedgy(request):
             token = verify_oauth2_token(credential, requests.Request(), '1080182836213-psdjtgo2u10a1fb6e4sbdfpdlmco5i63.apps.googleusercontent.com')
         except:
             pass
-    if request.method == 'POST' and token:
+    if token:
         user_doc = database.collection('users').document(token['sub'])
-        user_doc.set({'email': token['email'], 'given_name': token['given_name'], 'family_name': token['family_name'], 'picture': token['picture']})
+        if request.method == 'POST':
+            user_doc.set({'email': token['email'], 'given_name': token['given_name'], 'family_name': token['family_name'], 'picture': token['picture'], 'clicks': []})
+        if request.cookies.get('clicks'):
+            user_doc.update({'clicks': firestore.ArrayUnion(request.cookies.get('clicks').split(','))})
     if 'max' in request.args:
         max_request = int(request.args.get('max'))
         if 'query' in request.args or 'similar' in request.args:
@@ -60,4 +63,6 @@ def hedgy(request):
             response.set_cookie('credential', request.form['credential'], secure=True, httponly=True)
         else:
             response.set_cookie('credential', '', expires=0)
+    if token:
+        response.set_cookie('clicks', '')
     return response
